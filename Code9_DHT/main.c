@@ -128,3 +128,4 @@ void app_main(void)
     // Create FreeRTOS task to read DHT sensor periodically
     xTaskCreate(dht_task, "dht_task", 4096, NULL, 5, NULL);
 }
+
