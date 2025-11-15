@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DHT11 Live Monitor</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #2b5876, #4e4376);
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(15px);
+        padding: 25px 35px;
+        border-radius: 20px;
+        text-align: center;
+        width: 320px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        animation: fadeIn 1.2s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+        margin-top: 0;
+        font-weight: 700;
+    }
+
+    .value {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin: 10px 0;
+    }
+
+    .label {
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+    .timestamp {
+        margin-top: 15px;
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>DHT11 Live Monitor</h2>
+    <div class="value" id="tempValue">-- °C</div>
+    <div class="label">Temperature</div>
+
+    <div class="value" id="humValue">-- %</div>
+    <div class="label">Humidity</div>
+
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+		apiKey: "AIzaSyBZEouQaKE0Zuotj1EMaDef7MvYgQdb8V4",
+		authDomain: "fir-eb5cc.firebaseapp.com",
+		databaseURL: "https://fir-eb5cc-default-rtdb.firebaseio.com",
+		projectId: "fir-eb5cc",
+		storageBucket: "fir-eb5cc.firebasestorage.app",
+		messagingSenderId: "499361579850",
+		appId: "1:499361579850:web:879e54e0366474c7a7f7b3"
+	  };
+
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    db.ref("sensors/dht11").on("value", snapshot => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        document.getElementById("tempValue").textContent = data.temperature.toFixed(1) + " °C";
+        document.getElementById("humValue").textContent = data.humidity.toFixed(1) + " %";
+
+        const t = new Date(data.timestamp * 1000);
+        document.getElementById("timeValue").textContent =
+            "Last update: " + t.toLocaleString();
+    });
+</script>
+
+</body>
+</html>
